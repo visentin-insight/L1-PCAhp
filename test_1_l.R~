@@ -1,5 +1,0 @@
-source("~/l1pcahp/src/compare_PCA_long.R")
-
-compPCAlong("mfeat",2,3,2,trainingnr = 300)
-
-
