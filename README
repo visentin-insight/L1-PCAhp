@@ -12,23 +12,26 @@ Andrea Visentin, Steven Prestwich and Armagan Tarim
 ./pca:					## this directory contains the implementation of PCA
 
 	l1pcahp.R			## the solution we introduce in the paper
+					## it needs the similar input to all the others 
+					## implementation op PCA in R
 	l2pca.R				## a container function
 
 
 ./src:					## this directory contains shared functions
 	
-	classifier.R
-	dataset_manager.R
-	print.R
-	syntetic_data_generator.R
+	classifier.R			## 10cv 1nn classification used in Section 4.3
+	dataset_manager.R		## load, clean and format the data for Sections 4.2, 4.3 and 4.5
+	syntetic_data_generator.R	## data generator for test in Section 4.1
+
 
 ./test:
-	classification.R
-	initialization_comparation.R	
-	outliers_reconstruction.R
-	outliers_variance.R
-	syntetic.R
-	time_comparison.R
+
+	classification.R		## test present in Section 4.3
+	initialization_comparation.R	## test present in Section 4.5
+	outliers_reconstruction.R	## test present in Section 4.2 regarding reconstruction error
+	outliers_variance.R		## test present in Section 4.5 regarding variance of the projected points
+	syntetic.R			## test present in Section 4.1
+	time_comparison.R		## test present in Section 4.4
 
 ## R PACKAGE REQUIRED ##	
 	-pcaL1
