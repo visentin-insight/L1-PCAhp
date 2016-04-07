@@ -2,9 +2,6 @@
 ##### CLASSIFICATION FUNCTION #####
 # it returns the score of the classification
 knn10cv <- function(data_set,data_class) {
-  #load an edited version of KNN (max ties increased)
-  #libPaths( c( .libPaths(), "~/R/x86_64-redhat-linux-gnu-library/3.0/") )
-  #library("class", lib.loc="~/R/x86_64-redhat-linux-gnu-library/3.0/")
   require(class)
   #Create 10 equally size folds
   folds <- cut(seq(1,nrow(data.frame(data_set))),breaks=10,labels=FALSE)

@@ -1,9 +1,9 @@
   pcaTimeComp <- function(nrepeat = 10,obs = 1000, m = 10, p = 1, mu = 50, ntype = 1, percoutliers = 0.1, filename = FALSE)
 {
     #import functions
-    source("~/l1pcahp/src/data_generator.R") #dataset manager
-    source("~/l1pcahp/src/l1pcahp.R")    #l1pcahp function
-    source("~/l1pcahp/src/l2pca.R")   
+    source("~/l1pcahp/src/dataset_manager.R") #dataset manager
+    source("~/l1pcahp/pca/l1pcahp.R")    #l1pcahp function
+    source("~/l1pcahp/pca/l2pca.R")   
     library("pcaL1")
     library("pcaPP")
     library("MASS")

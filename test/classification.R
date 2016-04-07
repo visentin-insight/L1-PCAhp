@@ -1,19 +1,13 @@
-compPCAlong <- function(ds, shuffN = 10, maxfeature, minfeature = 1,startseed = 12345, filename = FALSE, trainingnr = 300, center = "mean", scale = "svd")
+compPCA <- function(ds, shuffN = 10, maxfeature, minfeature = 1,startseed = 12345, filename = FALSE, center = "mean", scale = "svd")
 {
   #import functions
-  source("~/l1pcahp/src/class_data.R") #dataset manager
-  source("~/l1pcahp/src/l1pcahp.R")    #l1pcahp function
+  source("~/l1pcahp/src/dataset_manager.R") #dataset manager
+  source("~/l1pcahp/pca/l1pcahp.R")    #l1pcahp function
   source("~/l1pcahp/src/classifier.R")    #10cvknn algorithm
-  source("~/l1pcahp/src/l2pca.R")    #10cvknn algorithm
+  source("~/l1pcahp/pca/l2pca.R")    #10cvknn algorithm
   library("pcaL1")
   library("pcaPP")
   library("MASS")
-  
-  scoreAndClassification <- function(loadings, data, data_class) {
-    points <- as.matrix(data %*% loadings)
-    result <- knn10cv(points, data_class = data_class)
-    result
-  }
   
   result_matrix <- rep(0, 17)
   
@@ -22,7 +16,6 @@ compPCAlong <- function(ds, shuffN = 10, maxfeature, minfeature = 1,startseed = 
   exp_data <- classDataset(ds)
   data_set <- exp_data$attributes
   data_class <- exp_data$class
-  
   if (center == "mean")
     data_set <- scale(data_set, center = TRUE, scale = FALSE)
   if (center == "median")
@@ -39,35 +32,26 @@ compPCAlong <- function(ds, shuffN = 10, maxfeature, minfeature = 1,startseed = 
     set.seed(nseed)
     gp <- runif(nrow(data_set))
     data_set <- data_set[order(gp),]
-    data_set_r <- data_set[1:trainingnr,]
-    #data_class <- data_class[order(gp)]
-    #data_class <- data_class[1:trainingnr]
+    data_class <- data_class[order(gp)]
     
+
     
     for (projDim in minfeature:maxfeature){
       ##### PCA #####
-      #timel2pca     <- system.time(mypca <- prcomp(data_set_r))
-      #l2pca_loadings <- mypca$rotation[,]
-      #l2pca_loadings <- t(l2pca_loadings[1:projDim, ])
+      timel2pca     <- system.time(data_l2pca <- l2pca(data_set,projDim = projDim,center = TRUE, scores = TRUE, projPoints = FALSE))
+      timePCAproj   <- system.time(data_PCAproj <- PCAproj(data_set,projDim))
+      timePCAgrid   <- system.time(data_PCAgrid <- PCAgrid(data_set,projDim))
+      timepcaL1     <- system.time(data_pcal1 <- pcal1(data_set,projDim = projDim,center = TRUE, scores = TRUE, projPoints = FALSE, initialize = "l2pca"))
+      timel1pca     <- system.time(data_l1pca <- l1pca(data_set,projDim = projDim,center = TRUE, projPoints = FALSE, initialize = "l2pca", tolerance = 0.0001, iterations = 10))
+      timestar      <- system.time(data_l1pcastar <- l1pcastar(data_set,projDim = projDim,center = TRUE, scores = TRUE, projPoints = FALSE))
+      timehp        <- system.time(data_l1plcahp <- l1pcahp(data_set,projDim = projDim, center = TRUE, scores = TRUE,  initialize = "l2pca", threshold = 0.001))
       
-      
-      
-      timel2pca     <- system.time(data_l2pca     <- l2pca(data_set,projDim = projDim,center = TRUE, scores = TRUE, projPoints = FALSE))
-      timePCAproj   <- system.time(data_PCAproj   <- PCAproj(data_set_r,projDim))
-      timePCAgrid   <- system.time(data_PCAgrid   <- PCAgrid(data_set_r,projDim))
-      timepcaL1     <- system.time(data_pcal1     <- pcal1(data_set_r,projDim = projDim,center = TRUE, scores = TRUE, projPoints = FALSE, initialize = "l2pca"))
-      timel1pca     <- system.time(data_l1pca     <- l1pca(data_set_r,projDim = projDim,center = TRUE, projPoints = FALSE, initialize = "l2pca", tolerance = 0.0001, iterations = 10))
-      timestar      <- system.time(data_l1pcastar <- l1pcastar(data_set_r,projDim = projDim,center = TRUE, scores = TRUE, projPoints = FALSE))
-      timehp        <- system.time(data_l1plcahp  <- l1pcahp(data_set_r,projDim = projDim, center = TRUE, scores = TRUE,  initialize = "l2pca", threshold = 0.001))
+      data_r <- list(data_l2pca$scores, data_PCAproj$scores, data_PCAgrid$scores,data_pcal1$scores,data_l1pca$scores,data_l1pcastar$scores,data_l1plcahp$scores)
+      data_time <- c(timel2pca[3],timePCAproj[3],timePCAgrid[3],timepcaL1[3], timel1pca[3], timestar[3],timehp[3])
       
       ##### KNN CLASSIFICATION #####  
       # apply the classificator to the dataset reduced
-      resultC <- c(scoreAndClassification(data_l2pca$loadings,data_set,data_class), scoreAndClassification(data_PCAproj$loadings,data_set,data_class), scoreAndClassification(data_PCAgrid$loadings,data_set,data_class), scoreAndClassification(data_pcal1$loadings,data_set,data_class), scoreAndClassification(data_l1pca$loadings,data_set,data_class), scoreAndClassification(data_l1pcastar$loadings[,1:projDim],data_set,data_class), scoreAndClassification(data_l1plcahp$loadings,data_set,data_class))
-      #resultC <- c(scoreAndClassification(data_PCAproj$loadings,data_set,data_class), scoreAndClassification(data_PCAgrid$loadings,data_set,data_class), scoreAndClassification(data_pcal1$loadings,data_set,data_class), scoreAndClassification(data_l1pca$loadings,data_set,data_class), scoreAndClassification(data_l1pcastar$loadings[,1:projDim],data_set,data_class), scoreAndClassification(data_l1plcahp$loadings,data_set,data_class))
-      
-      
-      data_time <- c(timel2pca[3],timePCAproj[3],timePCAgrid[3],timepcaL1[3], timel1pca[3], timestar[3],timehp[3])
-      
+      resultC <- sapply (data_r, knn10cv, data_class = data_class) 
       result_matrix <- rbind(result_matrix, c(nseed,resultC, data_time,exp_data$id,projDim))
       
       write( c(nseed,resultC, data_time,exp_data$id,projDim),file = "~/results/classifieroutput.txt", ncolumns = 17, append = TRUE, sep = ";") 

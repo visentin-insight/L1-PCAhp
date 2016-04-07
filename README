@@ -1,0 +1,47 @@
+This repository contains all the code used for the "Computational Results" of the paper 
+
+"Robust Principal Component Analysis by Reverse Iterative Linear Programming" 
+Andrea Visentin, Steven Prestwich and Armagan Tarim
+
+## FILE LIST ##
+
+./data:          			## this directory contains all the dataset. You must retrive 
+					## them from http://archive.ics.uci.edu/ml/index.html
+
+
+./pca:					## this directory contains the implementation of PCA
+
+	l1pcahp.R			## the solution we introduce in the paper
+	l2pca.R				## a container function
+
+
+./src:					## this directory contains shared functions
+	
+	classifier.R
+	dataset_manager.R
+	print.R
+	syntetic_data_generator.R
+
+./test:
+	classification.R
+	initialization_comparation.R	
+	outliers_reconstruction.R
+	outliers_variance.R
+	syntetic.R
+	time_comparison.R
+
+## R PACKAGE REQUIRED ##	
+	-pcaL1
+	-pcaPP
+	-MASS
+	-matrixStats
+	-wle
+	-class
+	-pdist
+
+
+## ADDITIONAL SOFTWARE REQUIRED ##
+
+MIP SOLVERS:
+	- COIN-OR Clp (>= 1.12.0)
+	- IBM ILOG CPLEX (>= 12.1)
