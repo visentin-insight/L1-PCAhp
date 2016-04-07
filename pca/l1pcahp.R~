@@ -1,7 +1,7 @@
-######################################################################################################
+###########################################################################
 ## Andrea Visentin
 ## The Insight Centre for Data Analytics, University College Cork, Ireland.
-######################################################################################################
+###########################################################################
 
 ############ Description
 ## This method implement the L1-PCAhp solution introduced in :
@@ -22,6 +22,7 @@
 ##			PCA/SVD, "random" - use a randomly-generated matrix 
 ## threshold		sets the convergence tolerance for the algorithm, default is 0.001
 
+############ Description
 l1pcahp <- function (X, projDim=1, center=TRUE, projPoints=FALSE, scores=TRUE, initialize="l2pca", threshold=0.001)
 {
   library(cplexAPI)
